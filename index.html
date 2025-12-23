@@ -242,6 +242,7 @@
             const iframe = document.getElementById('viewer');
             const welcome = document.getElementById('welcome-msg');
             const hamburger = document.getElementById('hamburger');
+            let userSelected = false; // 用户是否主动选择模块
 
             // 事件委托：点击侧栏链接设置 active（保持默认行为以加载 iframe）
             navList.addEventListener('click', function (e) {
@@ -250,6 +251,11 @@
                 // 设置样式
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 a.classList.add('active');
+
+                // 标记为用户已选择，并隐藏欢迎信息（避免在初次页面 load 时被 iframe 的 about:blank 或其它事件误隐藏）
+                userSelected = true;
+                welcome.style.display = 'none';
+
                 // 移动端交互：如果是小屏并且不希望侧栏持续可见，可折叠侧栏
                 if (window.matchMedia('(max-width:600px)').matches) {
                     sidebar.classList.add('collapsed');
@@ -296,19 +302,20 @@
                 });
             }
 
-            // iframe 加载处理：当子页面加载（或跨域不可访问时）隐藏欢迎信息
+            // iframe 加载处理：仅在用户已主动选择模块时才隐藏欢迎信息（避免 about:blank 导致闪现）
             iframe.addEventListener('load', function () {
+                if (!userSelected) return; // 忽略页面初始的 about:blank 等 load 事件
                 try {
                     // 尝试更严格的判断：若能访问 document 且有内容则认为加载成功
                     const doc = iframe.contentDocument || iframe.contentWindow.document;
                     if (doc && (doc.readyState === 'complete' || (doc.body && doc.body.children.length))) {
                         welcome.style.display = 'none';
                     } else {
-                        // 若文档存在但没内容，仍隐藏欢迎（避免长期遮盖）
+                        // 文档存在但没内容，仍隐藏欢迎（避免长期遮盖）
                         welcome.style.display = 'none';
                     }
                 } catch (err) {
-                    // 跨域访问会抛错，这里仍然认为加载完成，隐藏欢迎
+                    // 跨域访问会抛错：用户已选择且 src 非 about:blank 时也隐藏欢迎
                     welcome.style.display = 'none';
                 }
             });
