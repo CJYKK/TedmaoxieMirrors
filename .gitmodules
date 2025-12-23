@@ -1,0 +1,15 @@
+[submodule "titration_curve"]
+	path = titration_curve
+	url = https://github.com/Tedmaoxie/titration-curve.git
+[submodule "atomic_structure"]
+	path = atomic_structure
+	url = https://github.com/Tedmaoxie/atom_structure_6.git
+[submodule "periodic_law"]
+	path = periodic_law
+	url = https://github.com/Tedmaoxie/atom_structure_3.git
+[submodule "vsepr"]
+	path = vsepr
+	url = https://github.com/Tedmaoxie/molecule-structure_2.git
+[submodule "crystal_structure"]
+	path = crystal_structure
+	url = https://github.com/Tedmaoxie/crystal-structure-1.git
