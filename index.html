@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>化学学科教学可视化整合</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Helvetica, Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--primary-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            transition: width .25s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .1);
+            overflow: hidden;
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sidebar-toggle:focus {
+            outline: 2px solid rgba(255, 255, 255, .2);
+            outline-offset: 2px;
+        }
+
+        .nav-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-grow: 1;
+            overflow: auto;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 18px;
+            color: #bdc3c7;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, .12);
+            transition: background .2s, color .2s;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .nav-item .label {
+            vertical-align: middle;
+        }
+
+        /* collapsed: hide like hamburger menu (off-canvas) */
+        .sidebar {
+            transform: translateX(0);
+            transition: transform .25s ease, width .25s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            min-width: 0;
+            transform: translateX(-100%);
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .label {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            text-align: center;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        /* hamburger button (hidden by default, shown when sidebar is collapsed or on mobile) */
+        #hamburger {
+            position: fixed;
+            left: 12px;
+            top: 12px;
+            z-index: 60;
+            background: var(--primary-color);
+            color: #fff;
+            border: 0;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+        }
+
+        .sidebar.collapsed+.main-content #hamburger {
+            display: block;
+        }
+
+        /* main */
+        .main-content {
+            flex-grow: 1;
+            position: relative;
+            background: var(--bg-color);
+            overflow: hidden;
+        }
+
+        iframe[name="viewer"] {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .welcome {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        /* mobile: sidebar floats and hidden when collapsed */
+        @media (max-width:600px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 40;
+                transform: translateX(0);
+                width: 260px;
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+            #hamburger {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="sidebar" id="sidebar" aria-label="侧边导航">
+            <h2>
+                <button id="sidebar-toggle" aria-expanded="true" aria-label="切换侧边栏" title="折叠侧边栏">☰</button>
+                化学可视化整合
+            </h2>
+
+            <div class="nav-list" role="navigation" aria-label="模块列表">
+                <a class="nav-item" href="./titration_curve/titration-curve-simulator.html" target="viewer"
+                    rel="noopener">
+                    <span class="label">中和滴定曲线</span>
+                </a>
+                <a class="nav-item" href="./atomic_structure/index.html" target="viewer" rel="noopener">
+                    <span class="label">构造原理与原子轨道</span>
+                </a>
+                <a class="nav-item" href="./periodic_law/index.html" target="viewer" rel="noopener">
+                    <span class="label">元素周期律</span>
+                </a>
+                <a class="nav-item" href="./vsepr/index.html" target="viewer" rel="noopener">
+                    <span class="label">VSEPR 分子构型</span>
+                </a>
+                <a class="nav-item" href="./crystal_structure/index.html" target="viewer" rel="noopener">
+                    <span class="label">晶体结构</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content" id="main">
+            <button id="hamburger" aria-controls="sidebar" aria-expanded="false" aria-label="打开侧边栏"
+                title="打开侧边栏">☰</button>
+            <div id="welcome-msg" class="welcome">
+                <h3>请从左侧选择一个可视化模块进行展示</h3>
+                <p>原作者：Tedmaoxie@实验中学<br>
+                    整合：CJYKK<br>
+                    <a href="https://github.com/Tedmaoxie">查看原作者 GitHub 主页</a>
+                </p>
+
+                <p>已知问题：
+                <ul>
+                    <li>在中和滴定曲线页面开关侧边栏会导致图表漂移（切换到其他页面再切回来即可恢复）</li>
+                    <li>在 VSEPR 页面中折叠侧边栏会导致度数显示漂移（折叠侧边栏即可恢复）</li>
+                </ul>
+                </p>
+
+            </div>
+            <iframe name="viewer" id="viewer"></iframe>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navList = document.querySelector('.nav-list');
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebar-toggle');
+            const iframe = document.getElementById('viewer');
+            const welcome = document.getElementById('welcome-msg');
+            const hamburger = document.getElementById('hamburger');
+
+            // 事件委托：点击侧栏链接设置 active（保持默认行为以加载 iframe）
+            navList.addEventListener('click', function (e) {
+                const a = e.target.closest('a.nav-item');
+                if (!a) return;
+                // 设置样式
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                a.classList.add('active');
+                // 移动端交互：如果是小屏并且不希望侧栏持续可见，可折叠侧栏
+                if (window.matchMedia('(max-width:600px)').matches) {
+                    sidebar.classList.add('collapsed');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+                // 允许链接的默认导航行为：target="viewer" 会在 iframe 中加载 href
+            });
+
+            // 折叠/展开侧栏
+            toggle.addEventListener('click', function () {
+                const collapsed = sidebar.classList.toggle('collapsed');
+                this.setAttribute('aria-expanded', String(!collapsed));
+            });
+
+            // 键盘支持（Enter/Space）
+            toggle.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+
+            // 独立的汉堡按钮（用于在侧栏收回后仍可打开）
+            if (typeof hamburger !== 'undefined' && hamburger !== null) {
+                hamburger.addEventListener('click', function () {
+                    const wasCollapsed = sidebar.classList.contains('collapsed');
+                    if (wasCollapsed) {
+                        sidebar.classList.remove('collapsed');
+                        toggle.setAttribute('aria-expanded', 'true');
+                        this.setAttribute('aria-expanded', 'true');
+                    } else {
+                        sidebar.classList.add('collapsed');
+                        toggle.setAttribute('aria-expanded', 'false');
+                        this.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // 键盘支持（Enter/Space）为 hamburger
+                hamburger.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            }
+
+            // iframe 加载处理：当子页面加载（或跨域不可访问时）隐藏欢迎信息
+            iframe.addEventListener('load', function () {
+                try {
+                    // 尝试更严格的判断：若能访问 document 且有内容则认为加载成功
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (doc && (doc.readyState === 'complete' || (doc.body && doc.body.children.length))) {
+                        welcome.style.display = 'none';
+                    } else {
+                        // 若文档存在但没内容，仍隐藏欢迎（避免长期遮盖）
+                        welcome.style.display = 'none';
+                    }
+                } catch (err) {
+                    // 跨域访问会抛错，这里仍然认为加载完成，隐藏欢迎
+                    welcome.style.display = 'none';
+                }
+            });
+
+            // 可选：按下数字键 1-5 快速打开对应模块（友好快捷键）
+            document.addEventListener('keydown', function (e) {
+                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+                if (e.key >= '1' && e.key <= '5') {
+                    const idx = Number(e.key) - 1;
+                    const items = Array.from(document.querySelectorAll('.nav-item'));
+                    if (items[idx]) items[idx].click();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
